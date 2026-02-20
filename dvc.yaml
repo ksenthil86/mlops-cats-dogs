@@ -15,7 +15,6 @@ stages:
       - data/processed
     outs:
       - models/cats_dogs_cnn.pkl
-    metrics:
       - src/loss_curves.png:
           cache: false
       - src/confusion_matrix.png:

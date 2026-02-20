@@ -1,0 +1,21 @@
+# Add patterns of files DVC should ignore (similar to .gitignore)
+# https://dvc.org/doc/user-guide/dvcignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+
+# Jupyter
+.ipynb_checkpoints
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+
+# MLflow
+mlruns

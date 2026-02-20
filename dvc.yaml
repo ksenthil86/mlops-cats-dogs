@@ -1,0 +1,22 @@
+stages:
+  preprocess:
+    cmd: python src/data_preprocessing.py
+    deps:
+      - src/data_preprocessing.py
+      - data/raw
+    outs:
+      - data/processed
+
+  train:
+    cmd: cd src && python train.py
+    deps:
+      - src/train.py
+      - src/model.py
+      - data/processed
+    outs:
+      - models/cats_dogs_cnn.pkl
+    metrics:
+      - src/loss_curves.png:
+          cache: false
+      - src/confusion_matrix.png:
+          cache: false

@@ -133,8 +133,8 @@ class TestHealthEndpoint:
 
         importlib.reload(main_module)
 
-        client = TestClient(main_module.app)
-        return client
+        with TestClient(main_module.app) as client:
+            yield client
 
     def test_health_returns_200(self, client):
         """Test that health endpoint returns 200 when model is loaded."""

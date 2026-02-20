@@ -17,6 +17,11 @@ from datetime import datetime
 import numpy as np
 import torch
 from PIL import Image
+
+# Limit PyTorch threads to avoid CPU instruction crashes in Docker on macOS
+torch.set_num_threads(1)
+torch.set_num_interop_threads(1)
+
 from fastapi import FastAPI, UploadFile, File, Response
 from fastapi.responses import JSONResponse
 

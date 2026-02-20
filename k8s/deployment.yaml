@@ -5,7 +5,7 @@ metadata:
   labels:
     app: cats-dogs-classifier
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: cats-dogs-classifier
@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: inference-service
-          image: <DOCKER_HUB_USERNAME>/cats-dogs-classifier:latest
+          image: ksenthil86/cats-dogs-classifier:latest
           ports:
             - containerPort: 8000
           env:
@@ -28,11 +28,11 @@ spec:
               value: "/app/models/cats_dogs_cnn.pkl"
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "250m"
+              memory: "4Gi"
+              cpu: "1000m"
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: "6Gi"
+              cpu: "2000m"
           readinessProbe:
             httpGet:
               path: /health

@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM --platform=linux/amd64 python:3.10-slim
 
 # Set working directory
 WORKDIR /app
@@ -20,6 +20,9 @@ COPY models/ ./models/
 # Set environment variables
 ENV MODEL_PATH=/app/models/cats_dogs_cnn.pkl
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app/app:/app/src
+ENV OMP_NUM_THREADS=1
+ENV MKL_NUM_THREADS=1
 
 # Expose port
 EXPOSE 8000

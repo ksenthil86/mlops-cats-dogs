@@ -191,19 +191,37 @@ docker stop cats-dogs-test && docker rm cats-dogs-test
 docker login
 
 # Tag the image
-docker tag cats-dogs-classifier:latest <your-dockerhub-username>/cats-dogs-classifier:latest
+docker tag cats-dogs-classifier:latest ksenthil86/cats-dogs-classifier:latest
 
 # Push
-docker push <your-dockerhub-username>/cats-dogs-classifier:latest
+docker push ksenthil86/cats-dogs-classifier:latest
 ```
 
 ### 8. Deploy to Local Kubernetes Cluster (Docker Desktop)
+
+**⚠️ Note:** The image (6.2GB) may exceed Docker Desktop's default memory allocation. To deploy on Kubernetes:
+1. Increase Docker Desktop memory: Settings → Resources → Memory (set to 8+ GB)
+2. Reduce replicas to 1 in `k8s/deployment.yaml`
+3. Proceed with steps 8a-8c below
+
+For immediate testing without Kubernetes, run the inference service locally:
+```bash
+# Local testing (no Kubernetes needed)
+cd /Users/senthilkumarkuppan/Desktop/mlops-cats-dogs
+source venv/bin/activate
+PYTHONPATH=app:src uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+# In another terminal, test:
+curl http://localhost:8000/health
+curl -X POST http://localhost:8000/predict -F "file=@data/test/test_1.jpg"
+```
 
 **8a. Update the image name in the deployment manifest:**
 
 Edit `k8s/deployment.yaml` and replace `<DOCKER_HUB_USERNAME>` with your Docker Hub username:
 ```yaml
 image: <your-dockerhub-username>/cats-dogs-classifier:latest
+replicas: 1
 ```
 
 **8b. Apply Kubernetes manifests:**

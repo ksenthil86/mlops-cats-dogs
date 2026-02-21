@@ -17,9 +17,6 @@ data/raw/
 data/processed/
 data/test/
 
-# Model artifacts (tracked by DVC)
-models/*.pkl
-
 # MLflow
 mlruns/
 

@@ -18,9 +18,21 @@ import numpy as np
 import torch
 from PIL import Image
 
-# Limit PyTorch threads to avoid CPU instruction crashes in Docker on macOS
-torch.set_num_threads(1)
-torch.set_num_interop_threads(1)
+def _configure_torch_runtime() -> None:
+    """Configure torch runtime once per process, safe for module reloads."""
+    if os.environ.get("TORCH_RUNTIME_CONFIGURED") == "1":
+        return
+
+    torch.set_num_threads(1)
+    try:
+        torch.set_num_interop_threads(1)
+    except (RuntimeError, ValueError):
+        pass
+
+    os.environ["TORCH_RUNTIME_CONFIGURED"] = "1"
+
+
+_configure_torch_runtime()
 
 from fastapi import FastAPI, UploadFile, File, Response
 from fastapi.responses import JSONResponse

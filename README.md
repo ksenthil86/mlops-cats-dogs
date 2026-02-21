@@ -216,9 +216,9 @@ docker push ksenthil86/cats-dogs-classifier:latest
 
 ### 8. Deploy to Local Kubernetes Cluster (Docker Desktop)
 
-**⚠️ Note:** The image (6.2GB) may exceed Docker Desktop's default memory allocation. To deploy on Kubernetes:
-1. Increase Docker Desktop memory: Settings → Resources → Memory (set to 8+ GB)
-2. Reduce replicas to 1 in `k8s/deployment.yaml`
+**Note:** The image (6.2GB) may exceed Docker Desktop's default memory allocation. To deploy on Kubernetes:
+1. Increase Docker Desktop memory: Settings → Resources → Memory (set to 12+ GB for 2 replicas)
+2. The deployment is configured with 2 replicas in `k8s/deployment.yaml` for high availability
 3. Proceed with steps 8a-8c below
 
 For immediate testing without Kubernetes, run the inference service locally:
@@ -238,7 +238,7 @@ curl -X POST http://localhost:8000/predict -F "file=@data/test/test_1.jpg"
 Edit `k8s/deployment.yaml` and replace `<DOCKER_HUB_USERNAME>` with your Docker Hub username:
 ```yaml
 image: <your-dockerhub-username>/cats-dogs-classifier:latest
-replicas: 1
+replicas: 2
 ```
 
 **8b. Apply Kubernetes manifests:**
@@ -320,13 +320,12 @@ This verifies:
 The pipeline (`.github/workflows/ci-cd.yaml`) supports both automatic and manual runs:
 
 - **Push/PR to `main`** → runs **Test** and **Build & Push**
-- **Manual run (`workflow_dispatch`)** → runs **Test** and **Build & Push**, and can optionally run **Deploy**
+- **Manual run (`workflow_dispatch`)** → runs **Test** and **Build & Push**
 
 ### Pipeline Stages:
 
 1. **Test** — Install dependencies, run `pytest tests/ -v --tb=short`
 2. **Build & Push** — Build Docker image, push to Docker Hub
-3. **Deploy (manual only)** — Apply Kubernetes manifests and run smoke tests when `deploy=true` in manual run
 
 ### Required GitHub Secrets:
 

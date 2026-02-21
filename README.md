@@ -317,28 +317,46 @@ This verifies:
 
 ## CI/CD Pipeline (GitHub Actions)
 
-The CI/CD pipeline (`.github/workflows/ci-cd.yaml`) runs automatically on every push/PR to `main`.
+The pipeline (`.github/workflows/ci-cd.yaml`) supports both automatic and manual runs:
+
+- **Push/PR to `main`** → runs **Test** and **Build & Push**
+- **Manual run (`workflow_dispatch`)** → runs **Test** and **Build & Push**, and can optionally run **Deploy**
 
 ### Pipeline Stages:
 
-1. **Test** — Install dependencies, run `pytest tests/ -v`
-2. **Build & Push** — Build Docker image, push to Docker Hub (only on `main` push)
-3. **Deploy** — Update Kubernetes deployment with new image, run smoke tests
+1. **Test** — Install dependencies, run `pytest tests/ -v --tb=short`
+2. **Build & Push** — Build Docker image, push to Docker Hub
+3. **Deploy (manual only)** — Apply Kubernetes manifests and run smoke tests when `deploy=true` in manual run
 
 ### Required GitHub Secrets:
 
 Set these in your GitHub repository → Settings → Secrets and Variables → Actions:
 
-| Secret                 | Description                          |
-|------------------------|--------------------------------------|
-| `DOCKER_HUB_USERNAME`  | Your Docker Hub username             |
-| `DOCKER_HUB_TOKEN`     | Docker Hub access token              |
-| `KUBE_CONFIG`          | Base64-encoded kubeconfig file       |
+| Secret                 | Description                                       | Required For |
+|------------------------|---------------------------------------------------|--------------|
+| `DOCKER_HUB_USERNAME`  | Your Docker Hub username/namespace                | Build & Push |
+| `DOCKER_HUB_TOKEN`     | Docker Hub access token with push scope           | Build & Push |
+| `KUBE_CONFIG`          | Base64-encoded kubeconfig for a reachable cluster | Deploy only  |
 
 **To get your base64 kubeconfig:**
 ```bash
-cat ~/.kube/config | base64 | tr -d '\n'
+base64 -i ~/.kube/config | tr -d '\n'
 ```
+
+### Important Deploy Note
+
+GitHub-hosted runners **cannot** reach Docker Desktop local Kubernetes endpoints such as `kubernetes.docker.internal`.
+For manual deploy from GitHub Actions, use either:
+
+- A cloud-reachable Kubernetes cluster kubeconfig (AKS/EKS/GKE/etc.), or
+- A self-hosted GitHub runner running on your local machine/network.
+
+### How to run manual deploy
+
+1. Go to **GitHub → Actions → CI/CD Pipeline - Cats vs Dogs Classifier**
+2. Click **Run workflow**
+3. Set input `deploy` to `true`
+4. Run the workflow
 
 ---
 

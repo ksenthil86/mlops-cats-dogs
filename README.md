@@ -3,6 +3,23 @@
 End-to-end MLOps pipeline for binary image classification (Cats vs Dogs) for a pet adoption platform. Built with PyTorch, FastAPI, MLflow, DVC, Docker, Kubernetes, Prometheus, and GitHub Actions.
 
 ---
+### Team Contributions
+
+## Group: Group 55
+
+| Name | BITS ID | Contribution |
+|------|---------|--------------|
+| KIRANJEET KAUR ISHAR | 2024aa05769 | 100% |
+| SENTHILKUMAR K | 2024aa05227 | 100% |
+| SENTHIL KUMAR K | 2024aa05233 | 100% |
+| SHIV PRASAD VERMA | 2024aa05874 | 100% |
+| GURUPRASAD MISHRA | 2024aa05858 | 100% |
+
+---
+
+## Demo Video
+
+https://www.youtube.com/watch?v=7_EL_p9w2WQ
 
 ## Project Structure
 

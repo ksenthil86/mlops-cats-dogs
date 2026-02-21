@@ -2,12 +2,6 @@ name: CI/CD Pipeline - Cats vs Dogs Classifier
 
 on:
   workflow_dispatch:
-    inputs:
-      deploy:
-        description: "Run Kubernetes deploy job"
-        required: false
-        type: boolean
-        default: false
   push:
     branches: [main]
   pull_request:

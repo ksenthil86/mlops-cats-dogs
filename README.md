@@ -336,27 +336,6 @@ Set these in your GitHub repository → Settings → Secrets and Variables → A
 |------------------------|---------------------------------------------------|--------------|
 | `DOCKER_HUB_USERNAME`  | Your Docker Hub username/namespace                | Build & Push |
 | `DOCKER_HUB_TOKEN`     | Docker Hub access token with push scope           | Build & Push |
-| `KUBE_CONFIG`          | Base64-encoded kubeconfig for a reachable cluster | Deploy only  |
-
-**To get your base64 kubeconfig:**
-```bash
-base64 -i ~/.kube/config | tr -d '\n'
-```
-
-### Important Deploy Note
-
-GitHub-hosted runners **cannot** reach Docker Desktop local Kubernetes endpoints such as `kubernetes.docker.internal`.
-For manual deploy from GitHub Actions, use either:
-
-- A cloud-reachable Kubernetes cluster kubeconfig (AKS/EKS/GKE/etc.), or
-- A self-hosted GitHub runner running on your local machine/network.
-
-### How to run manual deploy
-
-1. Go to **GitHub → Actions → CI/CD Pipeline - Cats vs Dogs Classifier**
-2. Click **Run workflow**
-3. Set input `deploy` to `true`
-4. Run the workflow
 
 ---
 

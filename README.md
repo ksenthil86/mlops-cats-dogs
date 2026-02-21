@@ -391,7 +391,41 @@ kubectl delete -f k8s/prometheus/prometheus-config.yaml
 | POST   | `/predict` | Accepts image file, returns label + probability  |
 | GET    | `/metrics` | Prometheus-formatted metrics                     |
 
-### Example `/predict` Response:
+---
+
+### `/health` - Health Check
+
+**Request:**
+```bash
+curl http://localhost:8000/health
+```
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "model_loaded": true,
+  "timestamp": "2025-01-15T10:30:00.000000"
+}
+```
+
+---
+
+### `/predict` - Image Classification
+
+**Request (using curl):**
+```bash
+# With a local image file
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@data/test/test_cat.jpg"
+
+# Or with any image path
+curl -X POST http://localhost:8000/predict \
+  -F "file=@/path/to/your/image.jpg"
+```
+
+**Response (Cat prediction):**
 ```json
 {
   "label": "cat",
@@ -402,11 +436,29 @@ kubectl delete -f k8s/prometheus/prometheus-config.yaml
 }
 ```
 
-### Example `/health` Response:
+**Response (Dog prediction):**
 ```json
 {
-  "status": "healthy",
-  "model_loaded": true,
-  "timestamp": "2025-01-15T10:30:00.000000"
+  "label": "dog",
+  "probability": 0.8542,
+  "confidence": 0.8542,
+  "filename": "test_dog.jpg",
+  "timestamp": "2025-01-15T10:30:15.000000"
 }
+```
+
+**Response Fields:**
+- `label`: Classification result (`"cat"` or `"dog"`)
+- `probability`: Raw model output (0-1, where >0.5 = dog)
+- `confidence`: Confidence score for the predicted label (0-1)
+- `filename`: Original filename of uploaded image
+- `timestamp`: UTC timestamp of prediction
+
+---
+
+### `/metrics` - Prometheus Metrics
+
+**Request:**
+```bash
+curl http://localhost:8000/metrics
 ```

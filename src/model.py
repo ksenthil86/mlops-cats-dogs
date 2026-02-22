@@ -63,7 +63,9 @@ class SimpleCNN(nn.Module):
             Output tensor of shape (batch, 1) with probabilities.
         """
         x = self.conv_blocks(x)
-        x = self.fc_layers(x)
+        x = self.fc_layers[0](x)
+        x = x.contiguous()
+        x = self.fc_layers[1:](x)
         return x
 
 

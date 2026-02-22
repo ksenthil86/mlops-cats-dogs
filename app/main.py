@@ -24,10 +24,8 @@ def _configure_torch_runtime() -> None:
         return
 
     torch.set_num_threads(1)
-    try:
-        torch.set_num_interop_threads(1)
-    except (RuntimeError, ValueError):
-        pass
+    if hasattr(torch.backends, "mkldnn"):
+        torch.backends.mkldnn.enabled = False
 
     os.environ["TORCH_RUNTIME_CONFIGURED"] = "1"
 
@@ -117,6 +115,28 @@ def preprocess_image(image_bytes: bytes) -> torch.Tensor:
     return img_tensor.unsqueeze(0)
 
 
+def infer_probability_numpy_fallback(input_tensor: torch.Tensor) -> float:
+    """Fallback inference path that avoids torch FC matmul primitives."""
+    with torch.no_grad():
+        conv_out = model.conv_blocks(input_tensor)
+
+    features = conv_out.reshape(conv_out.shape[0], -1).detach().cpu().numpy().astype(np.float32)
+
+    fc1 = model.fc_layers[1]
+    fc2 = model.fc_layers[4]
+
+    weight1 = fc1.weight.detach().cpu().numpy().astype(np.float32).T
+    bias1 = fc1.bias.detach().cpu().numpy().astype(np.float32)
+    weight2 = fc2.weight.detach().cpu().numpy().astype(np.float32).T
+    bias2 = fc2.bias.detach().cpu().numpy().astype(np.float32)
+
+    hidden = np.maximum(features @ weight1 + bias1, 0.0)
+    logits = hidden @ weight2 + bias2
+    logits = np.clip(logits, -80.0, 80.0)
+    probabilities = 1.0 / (1.0 + np.exp(-logits))
+    return float(probabilities[0, 0])
+
+
 # ----- Endpoints -----
 @app.get("/health")
 async def health_check():
@@ -151,12 +171,18 @@ async def predict(file: UploadFile = File(...)):
         # Read and preprocess image
         image_bytes = await file.read()
         input_tensor = preprocess_image(image_bytes)
-        input_tensor = input_tensor.to(device)
+        input_tensor = input_tensor.to(device=device, dtype=torch.float32).contiguous()
 
         # Run inference
         with torch.no_grad():
-            output = model(input_tensor)
-            probability = output.item()
+            try:
+                output = model(input_tensor)
+                probability = output.item()
+            except RuntimeError as runtime_error:
+                if "primitive descriptor" not in str(runtime_error).lower():
+                    raise
+                logger.warning("Falling back to NumPy FC inference due to backend primitive error")
+                probability = infer_probability_numpy_fallback(input_tensor)
 
         # Determine label
         label = "dog" if probability >= 0.5 else "cat"

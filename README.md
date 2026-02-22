@@ -16,7 +16,9 @@ End-to-end MLOps pipeline for binary image classification (Cats vs Dogs) for a p
 | GURUPRASAD MISHRA | 2024aa05858 | 100% |
 
 ---
-Github Link - https://github.com/ksenthil86/mlops-cats-dogs.git
+**Github Link** - https://github.com/ksenthil86/mlops-cats-dogs.git
+
+**Demo Video** - https://youtu.be/JTLVyl_5gLc
 
 
 ## Project Structure

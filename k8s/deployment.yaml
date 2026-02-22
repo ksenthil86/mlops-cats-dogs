@@ -5,7 +5,7 @@ metadata:
   labels:
     app: cats-dogs-classifier
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: cats-dogs-classifier

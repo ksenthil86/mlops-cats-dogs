@@ -88,7 +88,7 @@ Before starting, ensure you have the following installed:
 
 ```bash
 # Clone the repo
-git clone https://github.com/<your-username>/mlops-cats-dogs.git
+git clone https://github.com/ksenthil86/mlops-cats-dogs.git
 cd mlops-cats-dogs
 
 # Create and activate virtual environment

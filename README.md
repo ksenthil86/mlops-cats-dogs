@@ -1,4 +1,4 @@
-# MLOps Pipeline — Cats vs Dogs Classifier
+# MLOps Pipeline — Cats vs Dogs Classifier - Assignment 2
 
 End-to-end MLOps pipeline for binary image classification (Cats vs Dogs) for a pet adoption platform. Built with PyTorch, FastAPI, MLflow, DVC, Docker, Kubernetes, Prometheus, and GitHub Actions.
 
@@ -16,10 +16,8 @@ End-to-end MLOps pipeline for binary image classification (Cats vs Dogs) for a p
 | GURUPRASAD MISHRA | 2024aa05858 | 100% |
 
 ---
+Github Link - https://github.com/ksenthil86/mlops-cats-dogs.git
 
-## Demo Video
-
-https://www.youtube.com/watch?v=7_EL_p9w2WQ
 
 ## Project Structure
 
@@ -147,7 +145,9 @@ This will:
 
 ```bash
 # Start MLflow tracking server (in a separate terminal)
-mlflow ui --port 5000
+mlflow ui --port 5001
+
+**View MLflow dashboard:** Open http://localhost:5001 in your browser.
 
 # Run training
 cd src
@@ -160,8 +160,6 @@ This will:
 - Log all hyperparameters, metrics, and artifacts to MLflow
 - Save the trained model to `models/cats_dogs_cnn.pkl`
 - Generate `loss_curves.png` and `confusion_matrix.png`
-
-**View MLflow dashboard:** Open http://localhost:5000 in your browser.
 
 Track processed data and model with DVC:
 ```bash
@@ -281,7 +279,8 @@ kubectl rollout status deployment/prometheus
 curl http://localhost:80/health
 
 # Prediction
-curl -X POST http://localhost:80/predict -F "file=@path/to/test_image.jpg"
+curl -X POST http://localhost:80/predict -F "file=@data/test/test_1.jpg"
+curl -X POST http://localhost:80/predict -F "file=@data/test/test_2.jpg"
 
 # Metrics
 curl http://localhost:80/metrics

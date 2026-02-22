@@ -1,0 +1,4 @@
+{
+  "tests/test_inference.py": true, 
+  "tests/test_preprocessing.py": true
+}
